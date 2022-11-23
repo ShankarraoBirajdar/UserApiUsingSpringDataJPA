@@ -17,9 +17,6 @@ public class UserService {
 	@Autowired
 	private UserRepository userRepository;
 
-	private static List<User> users = new ArrayList<>();
-
-	
 	public List<User> getAllUser() {
 		List<User> users = (List<User>) userRepository.findAll();
 		return users;
@@ -54,8 +51,9 @@ public class UserService {
 
 	}
 
+	
 	@Transactional
-	public boolean updateUser(int id,User user) {
+	public boolean updateUserUsingPut(int id,User user) {
 		boolean isUserUpdated=false;
 		if (userRepository.existsById(id)) {
 			Optional<User> optional = userRepository.findById(id);
@@ -66,13 +64,37 @@ public class UserService {
 			User resultUser = userRepository.save(user2);
 			isUserUpdated=true;
 			System.out.println(resultUser);
-			return isUserUpdated;
-		} else {
-			System.out.println("User Not Exist");
-			return isUserUpdated;
+			
 		}
+		return isUserUpdated;
+	}
+	
+	@Transactional
+	public boolean updateUserUsingPatch(int id, User user) {
+		boolean isUserUpdated = false;
+			if (userRepository.existsById(id)) {
+				Optional<User> optional = userRepository.findById(id);
+				User user2 = optional.get();
+				 System.out.println(user.getName());
+				 System.out.println(user.getGender());
+				 System.out.println(user.getSalary());
+				 if(user.getName()!=null) {
+					 user2.setName(user.getName());
+				}
+				 if(user.getSalary()!=0.0) {
+					 user2.setSalary(user.getSalary()); 
+				 }
+				 if(user.getGender()!=Character.MIN_VALUE) {
+					 user2.setGender(user.getGender());
+				 }
+				 User resultUser = userRepository.save(user2);
+				isUserUpdated = true;
+				System.out.println(resultUser);
+			}	
+		return isUserUpdated;
 
 	}
+
 
 	@Transactional
 	public boolean deleteUserById(int id) {

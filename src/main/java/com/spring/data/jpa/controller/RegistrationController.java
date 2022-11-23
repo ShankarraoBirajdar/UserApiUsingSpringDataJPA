@@ -1,38 +1,38 @@
 package com.spring.data.jpa.controller;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.spring.data.jpa.entities.User;
-import com.spring.data.jpa.services.UserService;
+import com.spring.data.jpa.entities.Registration;
+import com.spring.data.jpa.services.RegistartionService;
 
 @RestController
-public class UserController {
+public class RegistrationController {
 	@Autowired
-	private UserService userSevice;
+	private RegistartionService registartionService;
 	
-	@GetMapping("/get/users")
-	public ResponseEntity<List<User>> getAllUsers() {
-		List<User> list = userSevice.getAllUser();
+	@GetMapping("/get/registartion/users")
+	public ResponseEntity<List<Registration>> getAllUsers() {
+		List<Registration> list = registartionService.getAllUser();
 		if(list.size()>0)
 		return ResponseEntity.ok(list);
 		
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 	}
 	
-	@GetMapping("/get/user/{id}")
-	public ResponseEntity<User> getUserById(@PathVariable("id") int id) {
-		User user = userSevice.getUserById(id);
+	@GetMapping("/get/registartion/user/{id}")
+	public ResponseEntity<Registration> getUserById(@PathVariable("id") int id) {
+		Registration user = registartionService.getUserById(id);
 		if(user==null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
@@ -40,9 +40,10 @@ public class UserController {
 		
 	}
 	
-	@PostMapping("/add/user")
-	public ResponseEntity<?> addUser(@RequestBody User user) {
-		boolean isUserCreated = userSevice.addUser(user);
+	@PostMapping("/create/registartion/user")
+	public ResponseEntity<?> addUser(@RequestBody Registration user) {
+		System.out.println("post: "+user.toString());
+		boolean isUserCreated = registartionService.addUser(user);
 		if(isUserCreated) {
 			return new ResponseEntity<Object>("User Created Successfully",HttpStatus.CREATED);
 		}
@@ -50,9 +51,9 @@ public class UserController {
 		
 	}
 	
-	@DeleteMapping("/delete/user/{id}")
+	@DeleteMapping("/delete/registartion/user/{id}")
 	public ResponseEntity<?> deleteUser(@PathVariable("id") int id) {
-		 boolean isUserDeleted =userSevice.deleteUserById(id);
+		 boolean isUserDeleted =registartionService.deleteUserById(id);
 		if(isUserDeleted) {
 			return new ResponseEntity<Object>("User Deleted Successfully",HttpStatus.NO_CONTENT);
 		}
@@ -60,25 +61,15 @@ public class UserController {
 		
 	}
 	
-	@PutMapping("/update/user/{id}")
-	public ResponseEntity<?> updateUser(@PathVariable("id") int id, @RequestBody User user) {
-	User user2 = userSevice.getUserById(id);
+	@PutMapping("/update/registartion/user/{id}")
+	public ResponseEntity<?> updateUser(@PathVariable("id") int id, @RequestBody Registration user) {
+		Registration user2 = registartionService.getUserById(id);
 	if (user2 == null) {
-		userSevice.addUser(user);
+		registartionService.addUser(user);
 		return new ResponseEntity<Object>("User Created Successfully",HttpStatus.CREATED);
 	}
-	userSevice.updateUserUsingPut(id, user);
+	registartionService.updateUserUsingPut(id, user);
 	return new ResponseEntity<Object>("User Updated Successfully",HttpStatus.OK);
 	}
-	
-	@PatchMapping("/update/user/{id}")
-	public ResponseEntity<?> updateUserPatch(@PathVariable("id") int id, @RequestBody User user) {
-		boolean isUserUpdated = userSevice.updateUserUsingPatch(id, user);
-		if (isUserUpdated) {
-			return new ResponseEntity<Object>("User Updated Successfully",HttpStatus.OK);
-		}
-		return new ResponseEntity<Object>("User Not Found",HttpStatus.NOT_FOUND);
-	}
-	
 
 }
